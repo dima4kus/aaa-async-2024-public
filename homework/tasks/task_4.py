@@ -1,21 +1,25 @@
-async def task_1(i: int):
+async def task_1(i: int, coroutine_tracker: list):
+    coroutine_tracker.append(1)
+
     if i == 0:
         return
 
     if i > 5:
-        await task_2(i // 2)
+        await task_2(i // 2, coroutine_tracker)
     else:
-        await task_2(i - 1)
+        await task_2(i - 1, coroutine_tracker)
 
 
-async def task_2(i: int):
+async def task_2(i: int, coroutine_tracker: list):
+    coroutine_tracker.append(2)
+    
     if i == 0:
         return
 
     if i % 2 == 0:
-        await task_1(i // 2)
+        await task_1(i // 2, coroutine_tracker)
     else:
-        await task_2(i - 1)
+        await task_2(i - 1, coroutine_tracker)
 
 
 async def coroutines_execution_order(i: int = 42) -> int:
@@ -27,6 +31,9 @@ async def coroutines_execution_order(i: int = 42) -> int:
     # Пример:
     # i = 7
     # return 12212
-    await task_1(i)
 
-    # YOUR CODE GOES HERE
+    coroutine_tracker = []
+    await task_1(i, coroutine_tracker)
+
+    return int(''.join(list(map(str, coroutine_tracker))))
+
